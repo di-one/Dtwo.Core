@@ -7,16 +7,23 @@ using Dtwo.API.Retro.Reflection;
 using Dtwo.Core.Retro;
 using Dtwo.Plugins;
 using Dtwo.API.DofusBase;
+using Dtwo.Core.Sniffer;
+using Noexia.ApplicationSocketSniffer;
+using System.Diagnostics;
 
 namespace Dtwo.Core.Dofus2
 {
-    public class RetroCore : CoreManager
+    public class RetroCore : CoreBase
     {
-        protected override ThreadProcess GetThreadProcess()
+        protected override DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, string ip)
         {
-            return new RetroThreadProcess();
-        }
+            if (process.MainWindowTitle.Contains('-')) // already connected player (XXXXXX - Dofus 1.X.X.X.X) or launching window
+            {
+                return null;
+            }
 
+            return new Dofus2Sniffer(dofusWindow, process, ip, netStatEntries);
+        }
         protected override bool InitPaths()
         {
             // todo

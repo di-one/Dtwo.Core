@@ -4,14 +4,25 @@ using Dtwo.API.Dofus2.Network.Messages;
 using Dtwo.API.DofusBase.Network.Messages;
 using Dtwo.API.Hybride.Network.Messages;
 using Dtwo.API.Hybride.Reflection;
+using Dtwo.Core.Sniffer;
+using Noexia.ApplicationSocketSniffer;
+using System.Diagnostics;
 
 namespace Dtwo.Core.Dofus2
 {
-    public class Dofus2ThreadProcess : ThreadProcess
+    internal class Dofus2Sniffer : DofusSnifferBase
     {
-        protected override HybrideMessage GetHybrideMessage(string identifier, DofusMessage message)
+        public Dofus2Sniffer(DofusWindow dofusWindow, string processName, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, processName, ip, netStatEntries)
         {
-            HybrideMessage hybrideMessage = HybrideMessagesLoader.Instance.GetDofus2Message(identifier);
+        }
+
+        internal Dofus2Sniffer(DofusWindow dofusWindow, Process process, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, process, ip, netStatEntries)
+        {
+        }
+
+        protected override HybrideMessage? GetHybrideMessage(string identifier, DofusMessage message)
+        {
+            HybrideMessage? hybrideMessage = HybrideMessagesLoader.Instance?.GetDofus2Message(identifier);
 
             return hybrideMessage;
         }

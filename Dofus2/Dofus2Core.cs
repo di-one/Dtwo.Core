@@ -7,15 +7,15 @@ using Dtwo.Plugins;
 using Dtwo.API.DofusBase;
 using Dtwo.API.Dofus2.AnkamaGames.Atouin;
 using Dtwo.API.Dofus2.Encoding;
+using Dtwo.Core.Sniffer;
+using Noexia.ApplicationSocketSniffer;
+using System.Diagnostics;
 
 namespace Dtwo.Core.Dofus2
 {
-    public class Dofus2Core : CoreManager
+    public class Dofus2Core : CoreBase
     {
-        public bool LangIsOnLoading { get; private set; }
-        public bool LangIsLoaded { get; private set; }
-
-        public override Task<bool> LoadLang(Action<int, int> progress = null) => Task.Factory.StartNew(() =>
+        public override Task<bool> LoadLang(Action<int, int>? progress = null) => Task.Factory.StartNew(() =>
         {
             try
             {
@@ -44,9 +44,14 @@ namespace Dtwo.Core.Dofus2
             return infos.DofusVersion == (int)EDofusVersion.Two || infos.DofusVersion == 2;
         }
 
-        protected override ThreadProcess GetThreadProcess()
+        protected override DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, string ip)
         {
-            return new Dofus2ThreadProcess();
+            if (process.MainWindowTitle.Contains('-') || process.MainWindowTitle.Contains('2') == false) // already connected player (XXXXXX - Dofus 2.X.X.X.X) or launching window
+            {
+                return null;
+            }
+
+            return new Dofus2Sniffer(dofusWindow, process, ip, netStatEntries);
         }
 
         protected override bool InitPaths()
@@ -58,8 +63,6 @@ namespace Dtwo.Core.Dofus2
 
         protected override bool LoadAdditionalData()
         {
-            //Database.LoadTeleporters(""); // todo : worldpathfinding plugin
-
             return true;
         }
 
@@ -70,7 +73,8 @@ namespace Dtwo.Core.Dofus2
 
         protected override bool LoadDofusData()
         {
-            DataCenterTypeManager.Init(); // reflection loading
+            if (DataCenterTypeManager.Init() == false) // reflection loading
+                return false;
 
             MapManager.Init(API.Dofus2.Paths.DofusMapsPath); // todo : path
 

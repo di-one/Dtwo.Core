@@ -3,14 +3,26 @@ using Dtwo.API.DofusBase.Network.Messages;
 using Dtwo.API.Hybride.Network.Messages;
 using Dtwo.API.Hybride.Reflection;
 using Dtwo.API.Retro.Network.Messages;
+using Dtwo.Core.Sniffer;
+using Noexia.ApplicationSocketSniffer;
+using System.Diagnostics;
 
 namespace Dtwo.Core.Retro
 {
-    internal class RetroThreadProcess : ThreadProcess
+    internal class DofusRetroSniffer : DofusSnifferBase
     {
-        protected override HybrideMessage GetHybrideMessage(string identifier, DofusMessage message)
+        public DofusRetroSniffer(DofusWindow dofusWindow, string processName, string ip, int deviceIndex, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow,processName, ip, netStatEntries)
         {
-            HybrideMessage hybrideMessage = HybrideMessagesLoader.Instance.GetRetroMessage(identifier);
+        }
+
+        internal DofusRetroSniffer(DofusWindow dofusWindow,Process process, string ip, int deviceIndex, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, process, ip, netStatEntries)
+        {
+        }
+
+
+        protected override HybrideMessage? GetHybrideMessage(string identifier, DofusMessage message)
+        {
+            HybrideMessage? hybrideMessage = HybrideMessagesLoader.Instance.GetRetroMessage(identifier);
 
             return hybrideMessage;
         }

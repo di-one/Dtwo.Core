@@ -1,33 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\source\repos\Dtwo\Noexia.ApplicationSocketSniffer\Noexia.ApplicationSocketSniffer.csproj" />
     <ProjectReference Include="..\Dtwo.API.Hybride\Dtwo.API.Hybride.csproj" />
     <ProjectReference Include="..\Dtwo.API\Dtwo.API.csproj" />
     <ProjectReference Include="..\Dtwo.Core.Plugins\Dtwo.Core.Plugins.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Accord.Neuro" Version="3.8.0" />
-    <PackageReference Include="Accord.Statistics" Version="3.8.0" />
-    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="PacketDotNet" Version="1.4.7" />
-    <PackageReference Include="SharpPcap" Version="6.2.5" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Configuration\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\.nuget\packages\newtonsoft.json\13.0.2\lib\net6.0\Newtonsoft.Json.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
