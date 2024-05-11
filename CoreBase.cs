@@ -212,39 +212,46 @@ namespace Dtwo.Core
 
         public void StartupListenProcesses(string ip, Action<bool, int>? callbackFinish = null)
         {
-
-            Process[] allDofusProcess;
-            if (HybrideManager.DofusVersion == API.DofusBase.EDofusVersion.Two)
-            {
-                allDofusProcess = Process.GetProcessesByName("dofus");
-            }
-            else
-            {
-                allDofusProcess = Process.GetProcessesByName("Dofus Retro");
-            }
-
-            var allEntries = NetStat.GetEntries();
+            var entries = DofusWindowsFinder.GetProcesses();
             int added = 0;
 
-            if (allEntries == null || allEntries.Count == 0)
+            List<Process> processes = new List<Process>();
+            foreach (var e in entries)
+            {
+                var process = Process.GetProcessById(e.Pid);
+                if (process == null)
+                {
+                    LogManager.LogError($"Process not found : {e.Pid}", 1);
+                    return;
+                }
+
+                processes.Add(process);
+            }
+
+            if (entries == null || entries.Count == 0)
             {
 				callbackFinish?.Invoke(false, 0);
 				return;
 			}
 
-            foreach (var process in allDofusProcess)
+            foreach (var process in processes)
             {
 				DofusWindow dofusWindow = new DofusWindow(process, HybrideManager.DofusVersion == EDofusVersion.Retro);
-				DofusSnifferBase? sniffer = GetSniffer(dofusWindow, allEntries, process, ip);
+				DofusSnifferBase? sniffer = GetSniffer(dofusWindow, entries, process, ip);
 
                 if (sniffer == null)
+                {
                     continue;
+                }
 
                 if (sniffer.Process == null)
+                {
                     continue;
-
+                }
                 if (m_sniffers != null && m_sniffers.FirstOrDefault(x => x.Key.Id == sniffer.Process.Id).Value != null)
+                {
                     continue;
+                }
 
                 if (m_sniffers == null)
                     m_sniffers = new();
@@ -257,8 +264,10 @@ namespace Dtwo.Core
 
                 try
                 {
-                    if (sniffer.Start(false) != EStartSniffResult.Success)
+                    var result = sniffer.Start(true);
+                    if (result != EStartSniffResult.Success)
                     {
+                        LogManager.LogError("Impossible de démarrer le sniffer " + result.ToString(), 1);
                         callbackFinish?.Invoke(false, 0);
                         return;
                     }
@@ -266,7 +275,7 @@ namespace Dtwo.Core
                 catch(Exception ex)
                 {
                     callbackFinish?.Invoke(false, 0);
-                    Debug.WriteLine(ex);
+                    LogManager.LogError("Impossible de démarrer le sniffer : " + ex, 1);
                     return;
                 }
 

@@ -5,6 +5,7 @@ using Dtwo.Plugins;
 using Dtwo.API.DofusBase;
 using Dtwo.Core.Sniffer;
 using System.Diagnostics;
+using Dtwo.Core.Retro;
 
 namespace Dtwo.Core.Dofus2
 {
@@ -17,7 +18,7 @@ namespace Dtwo.Core.Dofus2
                 return null;
             }
 
-            return new Dofus2Sniffer(dofusWindow, process, ip, netStatEntries);
+            return new DofusRetroSniffer(dofusWindow, process, ip, netStatEntries);
         }
         protected override bool InitPaths()
         {

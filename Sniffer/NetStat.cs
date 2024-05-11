@@ -104,7 +104,11 @@ namespace Dtwo.Core.Sniffer
             {
                 if (e.Pid != process.Id) continue;
 
-                if (e.LocalAddress == e.DistantAdress || e.DistantAdress.StartsWith(ip) == false) continue;
+                if (e.LocalAddress == e.DistantAdress || e.DistantAdress.StartsWith(ip) == false)
+                {
+                    Debug.WriteLine("distant addr : " + e.DistantAdress);
+                    continue;
+                }
 
                 return e;
             }

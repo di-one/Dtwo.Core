@@ -62,8 +62,9 @@ namespace Dtwo.Core.Sniffer
                 m_netStatEntries = NetStat.GetEntries();
             }
 
-            if (m_netStatEntries == null)
+            if (m_netStatEntries == null || m_netStatEntries.Count == 0)
             {
+                Debug.WriteLine("NotNetStatEntry 1");
                 return EStartSniffResult.NotNetStatEntry;
             }
 
@@ -71,6 +72,7 @@ namespace Dtwo.Core.Sniffer
 
             if (neededEntry == null)
             {
+                Debug.WriteLine("NotNetStatEntry 2");
                 return EStartSniffResult.NotNetStatEntry;
             }
 
