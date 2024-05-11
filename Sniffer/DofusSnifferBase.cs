@@ -1,6 +1,5 @@
 ﻿using Dtwo.API.DofusBase.Network.Messages;
 using Dtwo.API;
-using Noexia.ApplicationSocketSniffer;
 using SharpPcap;
 using System.Diagnostics;
 using Dtwo.API.Hybride.Network.Messages;

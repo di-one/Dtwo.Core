@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\source\repos\Dtwo\Noexia.ApplicationSocketSniffer\Noexia.ApplicationSocketSniffer.csproj" />
     <ProjectReference Include="..\Dtwo.API.Hybride\Dtwo.API.Hybride.csproj" />
     <ProjectReference Include="..\Dtwo.API\Dtwo.API.csproj" />
     <ProjectReference Include="..\Dtwo.Core.Plugins\Dtwo.Core.Plugins.csproj" />
@@ -15,6 +14,10 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpPcap" Version="6.3.0" />
   </ItemGroup>
 
 </Project>
