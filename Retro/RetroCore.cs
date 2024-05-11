@@ -1,14 +1,9 @@
-﻿using Dtwo.API.Dofus2.Network.Messages;
-using Dtwo.API.Dofus2.Data;
-using Dtwo.API.Dofus2.Reflection;
-using Dtwo.API.Dofus2.AnkamaGames.Jerakine.Data;
-using Dtwo.API;
+﻿using Dtwo.API;
 using Dtwo.API.Retro.Reflection;
-using Dtwo.Core.Retro;
+
 using Dtwo.Plugins;
 using Dtwo.API.DofusBase;
 using Dtwo.Core.Sniffer;
-using Noexia.ApplicationSocketSniffer;
 using System.Diagnostics;
 
 namespace Dtwo.Core.Dofus2

@@ -10,7 +10,6 @@ using Dtwo.API.DofusBase;
 using Dtwo.API.Hybride;
 using SharpPcap.LibPcap;
 using Dtwo.API.Dofus2.AnkamaGames.Dofus.DataCenter;
-using Noexia.ApplicationSocketSniffer;
 using Dtwo.Core.Dofus2;
 using Dtwo.Core.Retro;
 

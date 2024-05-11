@@ -4,7 +4,6 @@ using Dtwo.API.Hybride.Network.Messages;
 using Dtwo.API.Hybride.Reflection;
 using Dtwo.API.Retro.Network.Messages;
 using Dtwo.Core.Sniffer;
-using Noexia.ApplicationSocketSniffer;
 using System.Diagnostics;
 
 namespace Dtwo.Core.Retro

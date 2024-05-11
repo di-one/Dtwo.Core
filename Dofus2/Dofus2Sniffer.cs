@@ -5,7 +5,6 @@ using Dtwo.API.DofusBase.Network.Messages;
 using Dtwo.API.Hybride.Network.Messages;
 using Dtwo.API.Hybride.Reflection;
 using Dtwo.Core.Sniffer;
-using Noexia.ApplicationSocketSniffer;
 using System.Diagnostics;
 
 namespace Dtwo.Core.Dofus2

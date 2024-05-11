@@ -8,7 +8,6 @@ using Dtwo.API.DofusBase;
 using Dtwo.API.Dofus2.AnkamaGames.Atouin;
 using Dtwo.API.Dofus2.Encoding;
 using Dtwo.Core.Sniffer;
-using Noexia.ApplicationSocketSniffer;
 using System.Diagnostics;
 
 namespace Dtwo.Core.Dofus2

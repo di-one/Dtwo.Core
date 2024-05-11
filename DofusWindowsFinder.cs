@@ -1,12 +1,12 @@
 ﻿using Dtwo.API.Hybride;
 using Dtwo.API;
-using Noexia.ApplicationSocketSniffer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Dtwo.Core.Sniffer;
 
 namespace Dtwo.Core
 {
