@@ -12,6 +12,7 @@ using SharpPcap.LibPcap;
 using Dtwo.API.Dofus2.AnkamaGames.Dofus.DataCenter;
 using Dtwo.Core.Dofus2;
 using Dtwo.Core.Retro;
+using Dtwo.API.Inputs;
 
 namespace Dtwo.Core
 {
@@ -97,6 +98,8 @@ namespace Dtwo.Core
                         OnStartEnd(false);
                         return;
                     }
+
+                    // Todo : options
 
                     InitHybride(dofusVersion);
 
@@ -212,77 +215,80 @@ namespace Dtwo.Core
 
         public void StartupListenProcesses(string ip, Action<bool, int>? callbackFinish = null)
         {
-            var entries = DofusWindowsFinder.GetProcesses();
-            int added = 0;
-
-            List<Process> processes = new List<Process>();
-            foreach (var e in entries)
+            Task.Factory.StartNew(() =>
             {
-                var process = Process.GetProcessById(e.Pid);
-                if (process == null)
+                var entries = DofusWindowsFinder.GetProcesses();
+                int added = 0;
+
+                List<Process> processes = new List<Process>();
+                foreach (var e in entries)
                 {
-                    LogManager.LogError($"Process not found : {e.Pid}", 1);
-                    return;
-                }
-
-                processes.Add(process);
-            }
-
-            if (entries == null || entries.Count == 0)
-            {
-				callbackFinish?.Invoke(false, 0);
-				return;
-			}
-
-            foreach (var process in processes)
-            {
-				DofusWindow dofusWindow = new DofusWindow(process, HybrideManager.DofusVersion == EDofusVersion.Retro);
-				DofusSnifferBase? sniffer = GetSniffer(dofusWindow, entries, process, ip);
-
-                if (sniffer == null)
-                {
-                    continue;
-                }
-
-                if (sniffer.Process == null)
-                {
-                    continue;
-                }
-                if (m_sniffers != null && m_sniffers.FirstOrDefault(x => x.Key.Id == sniffer.Process.Id).Value != null)
-                {
-                    continue;
-                }
-
-                if (m_sniffers == null)
-                    m_sniffers = new();
-
-                
-                m_sniffers.Add(sniffer.Process, sniffer);
-                DofusWindow.WindowsList.Add(dofusWindow);
-
-                sniffer.OnStop += OnSnifferStopped;
-
-                try
-                {
-                    var result = sniffer.Start(true);
-                    if (result != EStartSniffResult.Success)
+                    var process = Process.GetProcessById(e.Pid);
+                    if (process == null)
                     {
-                        LogManager.LogError("Impossible de démarrer le sniffer " + result.ToString(), 1);
-                        callbackFinish?.Invoke(false, 0);
+                        LogManager.LogError($"Process not found : {e.Pid}", 1);
                         return;
                     }
+
+                    processes.Add(process);
                 }
-                catch(Exception ex)
+
+                if (entries == null || entries.Count == 0)
                 {
                     callbackFinish?.Invoke(false, 0);
-                    LogManager.LogError("Impossible de démarrer le sniffer : " + ex, 1);
                     return;
                 }
 
-                added++;
-            }
+                foreach (var process in processes)
+                {
+                    DofusWindow dofusWindow = new DofusWindow(process, HybrideManager.DofusVersion == EDofusVersion.Retro);
+                    DofusSnifferBase? sniffer = GetSniffer(dofusWindow, entries, process, ip);
 
-            callbackFinish?.Invoke(true, added);
+                    if (sniffer == null)
+                    {
+                        continue;
+                    }
+
+                    if (sniffer.Process == null)
+                    {
+                        continue;
+                    }
+                    if (m_sniffers != null && m_sniffers.FirstOrDefault(x => x.Key.Id == sniffer.Process.Id).Value != null)
+                    {
+                        continue;
+                    }
+
+                    if (m_sniffers == null)
+                        m_sniffers = new();
+
+
+                    m_sniffers.Add(sniffer.Process, sniffer);
+                    DofusWindow.WindowsList.Add(dofusWindow);
+
+                    sniffer.OnStop += OnSnifferStopped;
+
+                    try
+                    {
+                        var result = sniffer.Start(true);
+                        if (result != EStartSniffResult.Success)
+                        {
+                            LogManager.LogError("Impossible de démarrer le sniffer " + result.ToString(), 1);
+                            callbackFinish?.Invoke(false, 0);
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        callbackFinish?.Invoke(false, 0);
+                        LogManager.LogError("Impossible de démarrer le sniffer : " + ex, 1);
+                        return;
+                    }
+
+                    added++;
+                }
+
+                callbackFinish?.Invoke(true, added);
+            });
         }
 
         protected abstract DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, string ip);
