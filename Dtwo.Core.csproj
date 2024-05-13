@@ -6,6 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <TargetFramework Condition="'$(BUILD_FOR_WINDOWS)' == 'true'">net8.0-windows10.0.22621.0</TargetFramework>
+    <TargetFramework Condition="'$(BUILD_FOR_WINDOWS)' != 'true'">net8.0</TargetFramework>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Dtwo.API.Hybride\Dtwo.API.Hybride.csproj" />
     <ProjectReference Include="..\Dtwo.API.Inputs\Dtwo.API.Inputs.csproj" />
