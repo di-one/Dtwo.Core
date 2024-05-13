@@ -21,18 +21,42 @@ namespace Dtwo.Core.Sniffer
             public readonly string State;
             public readonly int Pid;
 
-            public NetstatEntry(string protocole, string localAdress, string distanceAdress, string state, int pid)
+            public NetstatEntry(string protocole, string localADdress, int localPort, string distantAdress, int distantPort, string state, int pid)
+            {
+                Protocole = protocole;
+                LocalAddress = localADdress;
+                LocalPort = localPort;
+                DistantAdress = distantAdress;
+                DistantPort = distantPort;
+                State = state;
+                Pid = pid;
+            }
+
+            public static NetstatEntry? Parse(string protocole, string localAdress, string distanceAdress, string state, int pid)
             {
                 string[] localSplit = localAdress.Split(":");
                 string[] distantSplit = distanceAdress.Split(":");
 
-                Protocole = protocole;
-                LocalAddress = localSplit[0];
-                LocalPort = int.Parse(localSplit[1]);
-                DistantAdress = distantSplit[0];
-                DistantPort = int.Parse(distantSplit[1]);
-                State = state;
-                Pid = pid;
+                if (localSplit.Length < 2 || distantSplit.Length < 2)
+                {
+                    return null;
+                }
+
+                string localAddress = localSplit[0];
+                int localPort;
+                if (int.TryParse(localSplit[1], out localPort) == false)
+                {
+                    return null;
+                }
+
+                string distantAddress = distantSplit[0];
+                int distantPort;
+                if (int.TryParse(distantSplit[1], out distantPort) == false)
+                {
+                    return null;
+                }
+
+                return new NetstatEntry(protocole, localAddress, localPort, distantAddress, distantPort, state, pid);
             }
 
             public static NetstatEntry? Parse(string line)
@@ -45,10 +69,29 @@ namespace Dtwo.Core.Sniffer
                         return null;
                     }
 
-                    return new NetstatEntry(arr[0], arr[1], arr[2], arr[3], int.Parse(arr[4]));
+                    string protocole = arr[0];
+                    string localAdress = arr[1];
+                    string distantAdress = arr[2];
+                    string state = arr[3];
+                    string pidStr = arr[4];
+                    int pid;
+
+                    if (string.IsNullOrEmpty(pidStr) || int.TryParse(pidStr, out pid) == false)
+                    {
+                        return null;
+                    }
+
+                    if (string.IsNullOrEmpty(protocole) || string.IsNullOrEmpty(localAdress) || string.IsNullOrEmpty(distantAdress) || string.IsNullOrEmpty(state))
+                    {
+                        return null;
+                    }
+                    var entry = NetstatEntry.Parse(protocole, localAdress, distantAdress, state, pid);
+
+                    return entry;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine("error on parse entry : " + ex);
                     return null;
                 }
             }
@@ -72,7 +115,6 @@ namespace Dtwo.Core.Sniffer
             List<NetstatEntry> entries = new List<NetstatEntry>();
             try
             {
-
                 while ((line = pro.StandardOutput.ReadLine()) != null)
                 {
                     line = line.Trim();
@@ -90,7 +132,7 @@ namespace Dtwo.Core.Sniffer
 
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Debug.WriteLine("error on get entries : " + ex.Message);
                 return null;
             }
 
@@ -118,6 +160,8 @@ namespace Dtwo.Core.Sniffer
 
         public static IReadOnlyCollection<NetstatEntry?> GetEntriesByProcesses(IReadOnlyCollection<NetstatEntry> entries, Process[] process, Func<Process, bool> foreachProcessCallback, string ip)
         {
+            Debug.WriteLine("GetEntriesByProcesses");
+
             List<NetstatEntry?> result = new List<NetstatEntry?>();
 
             foreach (var p in process)
