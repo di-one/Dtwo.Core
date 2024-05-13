@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\source\repos\Dtwo\Dtwo.API.Inputs\Dtwo.API.Inputs.csproj" />
     <ProjectReference Include="..\Dtwo.API.Hybride\Dtwo.API.Hybride.csproj" />
     <ProjectReference Include="..\Dtwo.API\Dtwo.API.csproj" />
     <ProjectReference Include="..\Dtwo.Core.Plugins\Dtwo.Core.Plugins.csproj" />
