@@ -11,14 +11,14 @@ namespace Dtwo.Core.Dofus2
 {
     public class RetroCore : CoreBase
     {
-        protected override DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, string ip)
+        protected override DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, List<string> noServerIps)
         {
             if (process.MainWindowTitle.Contains('-')) // already connected player (XXXXXX - Dofus 1.X.X.X.X) or launching window
             {
                 return null;
             }
 
-            return new DofusRetroSniffer(dofusWindow, process, ip, netStatEntries);
+            return new DofusRetroSniffer(dofusWindow, process, noServerIps, netStatEntries);
         }
         protected override bool InitPaths()
         {

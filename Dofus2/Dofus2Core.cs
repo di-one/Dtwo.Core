@@ -43,14 +43,14 @@ namespace Dtwo.Core.Dofus2
             return infos.DofusVersion == (int)EDofusVersion.Two || infos.DofusVersion == 2;
         }
 
-        protected override DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, string ip)
+        protected override DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, List<string> noServerIps)
         {
             if (process.MainWindowTitle.Contains('-') || process.MainWindowTitle.Contains('2') == false) // already connected player (XXXXXX - Dofus 2.X.X.X.X) or launching window
             {
                 return null;
             }
 
-            return new Dofus2Sniffer(dofusWindow, process, ip, netStatEntries);
+            return new Dofus2Sniffer(dofusWindow, process, noServerIps, netStatEntries);
         }
 
         protected override bool InitPaths()

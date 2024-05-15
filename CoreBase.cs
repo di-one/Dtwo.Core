@@ -213,8 +213,11 @@ namespace Dtwo.Core
             m_sniffers.Clear();
         }
 
-        public void StartupListenProcesses(string ip, Action<bool, int>? callbackFinish = null)
+        public void StartupListenProcesses(List<string>? noServerIps, Action<bool, int>? callbackFinish = null)
         {
+            if (noServerIps == null)
+                noServerIps = new List<string>();
+
             Task.Factory.StartNew(() =>
             {
                 var entries = DofusWindowsFinder.GetProcesses();
@@ -242,7 +245,7 @@ namespace Dtwo.Core
                 foreach (var process in processes)
                 {
                     DofusWindow dofusWindow = new DofusWindow(process, HybrideManager.DofusVersion == EDofusVersion.Retro);
-                    DofusSnifferBase? sniffer = GetSniffer(dofusWindow, entries, process, ip);
+                    DofusSnifferBase? sniffer = GetSniffer(dofusWindow, entries, process, noServerIps);
 
                     if (sniffer == null)
                     {
@@ -291,7 +294,7 @@ namespace Dtwo.Core
             });
         }
 
-        protected abstract DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, string ip);
+        protected abstract DofusSnifferBase? GetSniffer(DofusWindow dofusWindow, IReadOnlyCollection<NetStat.NetstatEntry> netStatEntries, Process process, List<string> noServerIps);
         
         private bool LoadPlugins(List<byte[]>? bytes, Action<int>? progressionStep = null)
         {

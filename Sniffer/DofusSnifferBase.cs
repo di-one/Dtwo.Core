@@ -14,12 +14,12 @@ namespace Dtwo.Core.Sniffer
 
         private MessageParser? m_packetParser;
 
-        internal DofusSnifferBase(DofusWindow dofusWindow, string processName, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(processName, ip, netStatEntries)
+        internal DofusSnifferBase(DofusWindow dofusWindow, string processName, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(processName, noServerIps, netStatEntries)
         {
 			DofusWindow = dofusWindow;
 		}
 
-        internal DofusSnifferBase(DofusWindow dofusWindow, Process process, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(process, ip, netStatEntries)
+        internal DofusSnifferBase(DofusWindow dofusWindow, Process process, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(process, noServerIps, netStatEntries)
         {
             DofusWindow = dofusWindow;
 		}

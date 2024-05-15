@@ -7,7 +7,7 @@ namespace Dtwo.Core.Sniffer
     public abstract class SnifferBase : IDisposable
     {
         private Process? m_process;
-        private string? m_ip;
+        private List<string> m_noServerIps = new List<string>();
 
         private SocketClient? m_client;
         private bool m_started;
@@ -16,7 +16,7 @@ namespace Dtwo.Core.Sniffer
         public bool Started => m_started;
         public Process Process => m_process!;
 
-        public SnifferBase(string processName, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null)
+        public SnifferBase(string processName, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null)
         {
             var processes = Process.GetProcessesByName(processName);
 
@@ -25,18 +25,18 @@ namespace Dtwo.Core.Sniffer
                 m_process = processes[0];
             }
 
-            Init(ip, netStatEntries);
+            Init(noServerIps, netStatEntries);
         }
 
-        public SnifferBase(Process process, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null)
+        public SnifferBase(Process process, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null)
         {
             m_process = process;
-            Init(ip, netStatEntries);
+            Init(noServerIps, netStatEntries);
         }
 
-        private void Init(string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries)
+        private void Init(List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries)
         {
-            m_ip = ip;
+			m_noServerIps = noServerIps;
             m_netStatEntries = netStatEntries;
         }
 
@@ -52,11 +52,6 @@ namespace Dtwo.Core.Sniffer
                 return EStartSniffResult.ProcessNotFound;
             }
 
-            if (string.IsNullOrEmpty(m_ip))
-            {
-                return EStartSniffResult.InvalidIp;
-            }
-
             if (refreshNetstatEntries || m_netStatEntries == null)
             {
                 m_netStatEntries = NetStat.GetEntries();
@@ -68,7 +63,7 @@ namespace Dtwo.Core.Sniffer
                 return EStartSniffResult.NotNetStatEntry;
             }
 
-            var neededEntry = NetStat.GetEntryByProcess(m_netStatEntries, m_process, m_ip);
+            var neededEntry = NetStat.GetEntryByProcess(m_netStatEntries, m_process, m_noServerIps);
 
             if (neededEntry == null)
             {

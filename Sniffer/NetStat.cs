@@ -140,22 +140,43 @@ namespace Dtwo.Core.Sniffer
             return entries;
         }
 
-        public static NetstatEntry? GetEntryByProcess(IReadOnlyCollection<NetstatEntry> entries, Process process, string ip)
+        public static NetstatEntry? GetEntryByProcess(IReadOnlyCollection<NetstatEntry> entries, Process process, List<string> noServerIps)
         {
+            NetstatEntry? entry = null;
+            List<NetstatEntry> neededEntries = new List<NetstatEntry>();
+
             foreach (var e in entries)
             {
                 if (e.Pid != process.Id) continue;
 
-                if (e.LocalAddress == e.DistantAdress || e.DistantAdress.StartsWith(ip) == false)
+                bool hasNoServerIp = false;
+                foreach (var ip in noServerIps)
                 {
-                    Debug.WriteLine("distant addr : " + e.DistantAdress);
+					if (e.DistantAdress.StartsWith(ip))
+                    {
+                        hasNoServerIp = true;
+                        break;
+					}
+				}
+
+                if (e.LocalAddress == e.DistantAdress || hasNoServerIp)
+                {
+                    Debug.WriteLine("ip uncheck : " + e.DistantAdress);
                     continue;
                 }
 
-                return e;
+				Debug.WriteLine("ip check : " + e.DistantAdress);
+
+                neededEntries.Add(e);
+				entry = e;
             }
 
-            return null;
+            if (neededEntries.Count > 1)
+            {
+				Debug.WriteLine("More than one entry found for process " + process.ProcessName);
+			}
+
+            return entry;
         }
 
         public static IReadOnlyCollection<NetstatEntry?> GetEntriesByProcesses(IReadOnlyCollection<NetstatEntry> entries, Process[] process, Func<Process, bool> foreachProcessCallback, string ip)
@@ -166,7 +187,7 @@ namespace Dtwo.Core.Sniffer
 
             foreach (var p in process)
             {
-                NetstatEntry? entry = GetEntryByProcess(entries, p, ip);
+                NetstatEntry? entry = GetEntryByProcess(entries, p, new List<string>());
                 if (entry == null) continue;
 
                 if ((foreachProcessCallback != null && foreachProcessCallback.Invoke(p)) || foreachProcessCallback == null)

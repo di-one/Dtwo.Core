@@ -10,11 +10,11 @@ namespace Dtwo.Core.Retro
 {
     internal class DofusRetroSniffer : DofusSnifferBase
     {
-        public DofusRetroSniffer(DofusWindow dofusWindow, string processName, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow,processName, ip, netStatEntries)
+        public DofusRetroSniffer(DofusWindow dofusWindow, string processName, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow,processName, noServerIps, netStatEntries)
         {
         }
 
-        internal DofusRetroSniffer(DofusWindow dofusWindow,Process process, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, process, ip, netStatEntries)
+        internal DofusRetroSniffer(DofusWindow dofusWindow,Process process, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, process, noServerIps, netStatEntries)
         {
         }
 

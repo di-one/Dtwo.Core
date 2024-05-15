@@ -11,11 +11,11 @@ namespace Dtwo.Core.Dofus2
 {
     internal class Dofus2Sniffer : DofusSnifferBase
     {
-        public Dofus2Sniffer(DofusWindow dofusWindow, string processName, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, processName, ip, netStatEntries)
+        public Dofus2Sniffer(DofusWindow dofusWindow, string processName, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, processName, noServerIps, netStatEntries)
         {
         }
 
-        internal Dofus2Sniffer(DofusWindow dofusWindow, Process process, string ip, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, process, ip, netStatEntries)
+        internal Dofus2Sniffer(DofusWindow dofusWindow, Process process, List<string> noServerIps, IReadOnlyCollection<NetStat.NetstatEntry>? netStatEntries = null) : base(dofusWindow, process, noServerIps, netStatEntries)
         {
         }
 
